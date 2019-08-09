@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0053)http://www.usaco.org/current/data/sol_grassplant.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Contest Results</title>
+
+<meta http-equiv="EXPIRES" content="0">
+<meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+<meta http-equiv="PRAGMA" content="NO-CACHE">
+
+</head>
+
+<body><p><b>Solution Notes (Albert Gu):</b> There are many ways to do this
+problem, some of which are faster than others. One solution uses a
+technique called heavy-light decomposition.  Root the tree
+arbitrarily. Consider an edge between vertices u and v (let u be the
+parent of v). Call this edge heavy if the size of the subtree rooted
+at v is at least half the size of the subtree rooted at u, and light
+otherwise. Note that each parent has at most one heavy edge to a
+child, so the heavy edges form a set of chains. We will keep track of
+each heavy chain separately. </p>
+
+<p>Finally, any path from a vertex to the root has at most log n light
+edges, because advancing up a light edge at least doubles the size of
+the subtree. This path also has at most log n heavy chains, since a
+light edge separates every two heavy chains. This means we can divide
+this path into log n pieces, so adding grass along a path from a
+vertex to a root will take O(log n) time by adding it to each light
+edge and heavy chain on the path. Note that we will need to augment
+each heavy chain with a structure such as a range tree or BIT (binary
+indexed tree) because we might need to plant grass on only a prefix of
+a heavy chain.</p>
+
+<p>To update an arbitrary path, we note the following: Planting 1 grass
+on each edge along the path from A to B is the same as planting 1
+grass on each edge from A to the root, 1 grass on each edge from B to
+the root, and -2 grass on each edge from LCA(A, B) to the root, where
+LCA denotes the least common ancestor.</p>
+
+<p> (As a note, the memory limits for this problem were extremely
+tight --- probably a bit too tight; conserving memory was one of the
+main problems faced by most competitors). </p>
+
+<p> Here is Mark Gordon's code: </p>
+
+<pre><code>
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;cassert&gt;
+#include &lt;cstdio&gt;
+
+using namespace std;
+
+/* Heavy Light Implementation */
+#define MAXN 100000
+
+int N; // Number of nodes
+
+/* Node fields. */
+int VC[MAXN];  // Vertex chain index
+int VPOS[MAXN]; // Vertex chain position
+
+/* Chain fields. */
+int CP[MAXN]; // Chain parent (-1 if none)
+int CLN[MAXN]; // Number of vertexes in chain.
+
+vector&lt;int&gt; E[MAXN];
+
+pair&lt;int, int&gt; hang(int u, int p) {
+  int nodes = 1;
+  pair&lt;int, int&gt; result(0, -1);
+  for(int i = 0; i &lt; E[u].size(); i++) {
+    int v = E[u][i];
+    if(v == p) continue;
+    pair&lt;int, int&gt; res = hang(v, u);
+    nodes += res.first;
+    result = max(result, res);
+  }
+  E[u].clear();
+
+  if(result.second == -1) result.second = u;
+  E[result.second].push_back(u);
+  CP[result.second] = p;
+  
+  result.first = nodes;
+  return result;
+}
+
+/* Before calling E[i] represents the edges of vertex i.  After calling E[i] is
+ * a list (from root to child) of vertexes in chain i. */
+void prep_heavylight() {
+  hang(0, -1);
+  for(int i = 0; i &lt; N; i++) {
+    CLN[i] = E[i].size();
+    for(int j = 0; j &lt; E[i].size(); j++) {
+      VC[E[i][j]] = i;
+      VPOS[E[i][j]] = j;
+    }
+  }
+}
+
+/* Represents the nodes in the range [lo, hi) of chain. */
+struct ChainPart {
+  ChainPart(int chain, int lo, int hi) : chain(chain), lo(lo), hi(hi) {}
+  int chain;
+  int lo; // lo node on the chain.
+  int hi; // hi node on the chain. hi=CLN[chain] means chain connects to parent
+};
+
+/* Returns a list of all the sections of the chains on the path from u to v. */
+vector&lt;ChainPart&gt; chain_path(int u, int v) {
+  vector&lt;pair&lt;int, int&gt; &gt; cu, cv;
+  for(; u != -1; u = CP[VC[u]]) cu.push_back(make_pair(VC[u], VPOS[u]));
+  for(; v != -1; v = CP[VC[v]]) cv.push_back(make_pair(VC[v], VPOS[v]));
+  reverse(cu.begin(), cu.end());
+  reverse(cv.begin(), cv.end());
+  if(cv.size() &lt; cu.size()) cu.swap(cv);
+
+  int i;
+  for(i = 0; i &lt; cu.size() &amp;&amp; cu[i] == cv[i]; i++);
+
+  vector&lt;ChainPart&gt; ret;
+  if(i == cu.size()) {
+    ret.push_back(
+        ChainPart(cu.back().first, cu.back().second, cu.back().second));
+  } else if(cu[i].first == cv[i].first) {
+    ret.push_back(ChainPart(cu[i].first,
+                            min(cu[i].second, cv[i].second),
+                            max(cu[i].second, cv[i].second)));
+    ++i;
+  }
+  for(int j = i; j &lt; cu.size(); j++) {
+    ret.push_back(ChainPart(cu[j].first, cu[j].second, CLN[cu[j].first]));
+  }
+  for(int j = i; j &lt; cv.size(); j++) {
+    ret.push_back(ChainPart(cv[j].first, cv[j].second, CLN[cv[j].first]));
+  }
+  return ret;
+}
+
+/* Get rid of empty chain parts. */
+vector&lt;ChainPart&gt; filter(const vector&lt;ChainPart&gt;&amp; ch) {
+  vector&lt;ChainPart&gt; res;
+  for(int i = 0; i &lt; ch.size(); i++) {
+    if(ch[i].lo != ch[i].hi) {
+      res.push_back(ch[i]);
+    }
+  }
+  return res;
+}
+
+vector&lt;int&gt; bit[MAXN];
+
+void bit_add(vector&lt;int&gt;&amp; A, int x, int v) {
+  for(int i = x | A.size(); i &lt; (A.size() &lt;&lt; 1); i += i &amp; -i) {
+    A[i ^ A.size()] += v;
+  }
+}
+
+int bit_get(vector&lt;int&gt;&amp; A, int x) {
+  int ret = A[0];
+  for(int i = x; i; i &amp;= i - 1) ret += A[i];
+  return ret;
+}
+
+int main() {
+  freopen("grassplant.in", "r", stdin);
+  freopen("grassplant.out", "w", stdout);
+
+  int M;
+  scanf("%d%d", &amp;N, &amp;M);
+  for(int i = 1; i &lt; N; i++) {
+    int u, v; scanf("%d%d", &amp;u, &amp;v); u--; v--;
+    E[u].push_back(v);
+    E[v].push_back(u);
+  }
+  prep_heavylight();
+
+  for(int i = 0; i &lt; N; i++) {
+    if(!CLN[i]) continue;
+    bit[i] = vector&lt;int&gt;(1 &lt;&lt; (32 - __builtin_clz(CLN[i] - 1)), 0);
+  }
+
+  for(int i = 0; i &lt; M; i++) {
+    char op[2]; int u, v; scanf("%1s%d%d", op, &amp;u, &amp;v); u--; v--;
+    vector&lt;ChainPart&gt; ch = filter(chain_path(u, v));
+    if(op[0] == 'P') {
+      for(int i = 0; i &lt; ch.size(); i++) {
+        bit_add(bit[ch[i].chain], ch[i].lo, 1);
+        if(ch[i].hi &lt; CLN[ch[i].chain]) {
+          bit_add(bit[ch[i].chain], ch[i].hi, -1);
+        }
+      }
+    } else {
+      assert(ch.size() == 1 &amp;&amp; ch[0].lo + 1 == ch[0].hi);
+      printf("%d\n", bit_get(bit[ch[0].chain], ch[0].lo));
+    }
+  }
+}
+</code></pre>
+
+
+
+
+</body></html>

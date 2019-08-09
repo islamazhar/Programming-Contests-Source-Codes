@@ -1,0 +1,141 @@
+107 - The Cat in the Hat
+112 - Tree Summing
+115 - Climbing Trees
+ 120 - Stack of Flapjacks
+122 - Trees on the Level
+123 - Searching Quickly
+167 - Sultans Successors ( Sultan ke bolo dekhi? )
+172 - Calculator Language
+188 - Perfect Hash
+195 - Anagram
+297 - Quadtrees
+306 - Cipher
+347 - Run, run, runaround numbers
+514 - Rails
+524 - Prime Ring Problem
+529 - Addition Chains
+536 - Tree Recovery
+540 - Team Queue
+574 - Sum It Up
+604 - The Boggle Game
+639 - Don't Get Rooked
+642 - Word Amalgamation
+656 - Optimal Programs
+673 - Parentheses Balance
+679 - Dropping Balls
+688 -   Mobile Phone Coverage
+ 699 - The Falling Leaves
+712 - S-Trees
+729 - Hamming Distance Problem
+750 - 8-Queens Chess Problem
+755 - 487-3279
+843 - Crypt Kicker
+861 - Little Bishops
+989 - Su Doku
+10050 - Hartals
+10073 - Constrained Exchange Sort
+10152 - ShellSort
+10158 - War
+10181 - 15 Puzzle Problem
+10422 - Knights in FEN
+10909 - Lucky Numbers
+10938 - Flea Circus
+11034 - Ferry Loading IV
+11111 - Generalized Matrioshkas
+11234 - Expressions
+11235 - Frequent Values
+11263 - Nested Rectangles
+11295 - Anti Monotonicity Revisited
+11297 - Census
+11299 - Separating Rods
+11354 - Bond
+11402 - Ahoy, Pirates!
+11423 - Cache Stimulator
+11457 - Classified
+11492 - Babel
+11525 - Permutation
+11536 - Smallest Sub-array
+11537 - Secret Problemsetter's Union
+11592 - Bulbs Inside a Grid (II)
+11610 - Reverse Prime
+11669 - Non Decreasing Prime Sequence
+11672 - Dynamic Summation
+11732 - strcmp() Anyone
+?11871 - New Land
+11898 - Killer Problem
+11922 -   Permutation Transformer
+ 11983 - Weird Advertisement
+11987 - Almost Union-Find
+11990 - Dynamic Inversion
+11992 - Fast Matrix Operations
+11995 - I Can Guess the Data Structure!
+12003 - Array Transformer
+12086 - Potentiometers
+12141 - Line Chart
+12345 - Dynamic len(set(a[L:R]))
+12347 - Binary Search Tree
+12424 - Answering Queries on a Tree
+12429 - Finding Magic Triplets
+12436 - Rip Van Winkle's Code
+12440 - Save the Trees
+Problems from SPOJ ANDROUND
+BRCKTS
+BTCODE_G
+BUILDING
+CCOST
+COVER2
+COWPIC
+CPAIR
+DISQUERY
+DQUERY
+DYNALCA
+GSS1
+GSS2
+GSS3
+GSS5
+GSS6
+GSS7
+HELPBOB
+HELPR2D2
+HORRIBLE
+INCSEQ
+INCDSEQ
+INTERVA2
+INVCNT
+IOIGARD
+KGSS
+KPMATRIX
+KQUERY
+LGLOVE
+LIS2
+LITE
+LSORT
+MATRIX2
+MATSUM
+MCHAOS
+MKTHNUM
+MMINPER
+MULTQ3
+NICEDAY
+NKMARS
+ORDERS
+ORDERSET
+PATULJCI
+POSTERS
+QMAX3VN
+Q
+TREE2Q
+TREE4
+RACETIME
+RATING
+RENT
+RPARR
+RSCHED
+STRLCP
+SUMFOUR
+SUPPER
+SWAPS
+TEMPLEQ
+TFSETS
+WEIRDFN
+WILD

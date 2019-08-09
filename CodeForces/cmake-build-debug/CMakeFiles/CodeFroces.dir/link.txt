@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/CodeFroces.dir/Rounds/Codeforces-Round-576-Div-2/C.cpp.o  -o CodeFroces 
